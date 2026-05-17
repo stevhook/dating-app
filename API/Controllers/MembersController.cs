@@ -7,7 +7,7 @@ namespace API.Controllers
 {
     public class MembersController(AppDbContext context) : BaseApiController
     {
-        [HttpGet] // localhost:5001/api/members
+        [HttpGet] // api/members
         public async Task<ActionResult<IReadOnlyList<AppUser>>> GetMembers()
         {
             var members = await context.Users.ToListAsync();
@@ -15,7 +15,7 @@ namespace API.Controllers
             return members;
         }
 
-        [HttpGet("{id}")] // localhost:5001/api/members/test1-id
+        [HttpGet("{id}")] // api/members/test1-id
         public async Task<ActionResult<AppUser>> GetMember(string id)
         {
             var member = await context.Users.FindAsync(id);
