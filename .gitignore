@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 API/dating-app.db*
 API/appsettings.json
 .postman/resources.yaml
+.vscode/launch.json
