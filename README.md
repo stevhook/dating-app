@@ -6,6 +6,10 @@ Trying out Postman too for API testing, playwright tests for the e2e and investi
 
 ### 17 May 2026
 
+#### Documentation
+- create README
+- create requirements
+
 #### Backend
 - setup the basic dotnet solution
 - added AppUser entity class
@@ -19,6 +23,14 @@ Trying out Postman too for API testing, playwright tests for the e2e and investi
         - api/members - outputs full member list
         - api/members/{id} - outputs individual member
     - setup Postman to more easily test endpoints
+- added authentication
+    - updated AppUser with password fields (PasswordHash, PasswordSalt) and added migration updates
+    - added AccountController with register and login endpoints
+    - introduced authentication DTOs (RegisterDto, LoginDto, UserDto)
+    - added JWT token generation via ITokenService and TokenService
+    - configured JWT authentication in API startup and added TokenKey configuration
+    - updated members endpoint authorisation to use JWT-protected access
+- added AppUserExtensions to map AppUser to UserDto
 
 #### Frontend
 - setup Angular
