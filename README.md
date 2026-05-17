@@ -23,6 +23,7 @@ Trying out Postman too for API testing, playwright tests for the e2e and investi
         - api/members - outputs full member list
         - api/members/{id} - outputs individual member
     - setup Postman to more easily test endpoints
+- configured CORS to allow frontend requests from localhost:4200
 - added authentication
     - updated AppUser with password fields (PasswordHash, PasswordSalt) and added migration updates
     - added AccountController with register and login endpoints
@@ -37,3 +38,4 @@ Trying out Postman too for API testing, playwright tests for the e2e and investi
 - add basic HttpClient and Get call to front end
 - added simple render of members list from api call in front end
 - added Tailwind and daisyUI
+- added basic unit tests
