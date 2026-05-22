@@ -484,3 +484,5 @@ API/dating-app.db*
 API/appsettings.json
 .postman/resources.yaml
 .vscode/launch.json
+client/ssl/localhost.pem
+client/ssl/localhost-key.pem
