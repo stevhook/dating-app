@@ -4,7 +4,7 @@ Learning project for building a dating app with a .NET API and Angular client.
 
 ## Current State
 
-This repo is in an active build phase. Core auth and API plumbing are implemented, while several frontend feature pages are scaffolded but not fully wired.
+This repo is in an active build phase. Core auth and API plumbing are implemented, and the backend now includes richer member profile data, photos, repository-backed member queries, and automatic seed data.
 
 ## Tech Stack
 
@@ -21,19 +21,28 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
 
 - API bootstrapped with controller-based routing
 - `AppDbContext` + SQLite connection and EF migrations
-- `AppUser` entity persisted in DB
+- Domain entities for:
+    - `AppUser`
+    - `Member`
+    - `Photo`
 - Account auth endpoints:
     - `POST /api/account/register`
     - `POST /api/account/login`
 - JWT token generation via `ITokenService`/`TokenService`
 - JWT auth configured in startup pipeline
+- Repository abstraction for member data via `IMemberRepository` and `MemberRepository`
 - CORS enabled for:
     - `http://localhost:4200`
     - `https://localhost:4200`
-- Members endpoints:
-    - `GET /api/members` (public)
+- Members endpoints (JWT protected):
+    - `GET /api/members`
     - `GET /api/members/{id}` (requires auth)
+    - `GET /api/members/{id}/photos` (requires auth)
+- Member data now includes profile fields such as date of birth, gender, description, city, country, created date, and last active date
+- Member photos are related through the `Photo` entity
 - Central exception middleware (`ExceptionMiddleware`)
+- Automatic database migration on API startup
+- Development seed process on API startup using `Data/UserSeedData.json`
 - Test error endpoints (`/api/buggy/*`) for frontend error handling work
 
 ## Implemented Frontend Features
@@ -76,6 +85,13 @@ dotnet run
 ```
 
 The API is configured for `https://localhost:5001`.
+
+On startup the API will automatically:
+
+- apply pending EF migrations
+- seed development users if the database is empty
+
+The current seed data comes from `API/Data/UserSeedData.json` and uses the default development password `00Password!`.
 
 ### 2) Run the Angular client
 
