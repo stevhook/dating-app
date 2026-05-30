@@ -49,13 +49,20 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
     - lists
     - messages
     - errors test page
+    - server error page
+    - wildcard not found page
 - Error testing page calls backend `buggy` endpoints
+- HTTP error interceptor handling:
+    - 400 validation errors mapped to model state array
+    - 401 shown as toast
+    - 404 redirected to not found page
+    - 500 redirected to server error page with error payload in router state
+- Shared error UI components added for not found and server error screens
 - Tailwind CSS + daisyUI configured
 
 ## Partially Implemented / Stubbed Areas
 
 - `MemberList` and `MemberDetailed` components are present but currently stub components
-- Error interceptor exists but currently passes requests through without custom handling
 - No end-to-end or contract test setup is currently wired in this repo
 
 ## Local Run Instructions
