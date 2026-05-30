@@ -1,41 +1,96 @@
 # dating-app
-dating app learning project - creating a dating app from scratch with dotnet backend and angular frontend. 
-Trying out Postman too for API testing, playwright tests for the e2e and investigate contract testing for the API.
 
-## Progress
+Learning project for building a dating app with a .NET API and Angular client.
 
-### 17 May 2026
+## Current State
 
-#### Documentation
-- create README
-- create requirements
+This repo is in an active build phase. Core auth and API plumbing are implemented, while several frontend feature pages are scaffolded but not fully wired.
 
-#### Backend
-- setup the basic dotnet solution
-- added AppUser entity class
-- added EntityFramework with SQLite
-    - added AppDbContext class
-    - created my initial migration
-    - ran the migration to create the db
-    - added 5 test accounts to the database 
-- created MembersController 
-    - added two endpoints
-        - api/members - outputs full member list
-        - api/members/{id} - outputs individual member
-    - setup Postman to more easily test endpoints
-- configured CORS to allow frontend requests from localhost:4200
-- added authentication
-    - updated AppUser with password fields (PasswordHash, PasswordSalt) and added migration updates
-    - added AccountController with register and login endpoints
-    - introduced authentication DTOs (RegisterDto, LoginDto, UserDto)
-    - added JWT token generation via ITokenService and TokenService
-    - configured JWT authentication in API startup and added TokenKey configuration
-    - updated members endpoint authorisation to use JWT-protected access
-- added AppUserExtensions to map AppUser to UserDto
+## Tech Stack
 
-#### Frontend
-- setup Angular
-- add basic HttpClient and Get call to front end
-- added simple render of members list from api call in front end
-- added Tailwind and daisyUI
-- added basic unit tests
+- Backend: ASP.NET Core (`net10.0`), Entity Framework Core, SQLite, JWT auth
+- Frontend: Angular 20, Signals, Angular Router, Tailwind CSS v4, daisyUI
+
+## Project Structure
+
+- `API/`: ASP.NET Core Web API
+- `client/`: Angular frontend
+- `docs/`: requirement notes and supporting docs
+
+## Implemented Backend Features
+
+- API bootstrapped with controller-based routing
+- `AppDbContext` + SQLite connection and EF migrations
+- `AppUser` entity persisted in DB
+- Account auth endpoints:
+    - `POST /api/account/register`
+    - `POST /api/account/login`
+- JWT token generation via `ITokenService`/`TokenService`
+- JWT auth configured in startup pipeline
+- CORS enabled for:
+    - `http://localhost:4200`
+    - `https://localhost:4200`
+- Members endpoints:
+    - `GET /api/members` (public)
+    - `GET /api/members/{id}` (requires auth)
+- Central exception middleware (`ExceptionMiddleware`)
+- Test error endpoints (`/api/buggy/*`) for frontend error handling work
+
+## Implemented Frontend Features
+
+- Angular app scaffolded with route-based feature structure
+- Navigation component with login/logout flow
+- Registration UI and API call wiring
+- Auth state stored in `localStorage` and restored at app init (`InitService`)
+- Route guard for protected routes (`authGuard`)
+- Routes configured for:
+    - home
+    - members list/detail
+    - lists
+    - messages
+    - errors test page
+    - server error page
+    - wildcard not found page
+- Error testing page calls backend `buggy` endpoints
+- HTTP error interceptor handling:
+    - 400 validation errors mapped to model state array
+    - 401 shown as toast
+    - 404 redirected to not found page
+    - 500 redirected to server error page with error payload in router state
+- Shared error UI components added for not found and server error screens
+- Tailwind CSS + daisyUI configured
+
+## Partially Implemented / Stubbed Areas
+
+- `MemberList` and `MemberDetailed` components are present but currently stub components
+- No end-to-end or contract test setup is currently wired in this repo
+
+## Local Run Instructions
+
+### 1) Run the API
+
+From `API/`:
+
+```bash
+dotnet run
+```
+
+The API is configured for `https://localhost:5001`.
+
+### 2) Run the Angular client
+
+From `client/`:
+
+```bash
+npm install
+npm start
+```
+
+## Notes
+
+- Development token key is currently stored in `API/appsettings.Development.json` for local learning use.
+- Existing controllers like weather are scaffold leftovers and not part of the auth/member flow.
+
+## Architecture Diagram
+
+- Code interaction map: [docs/code-interactions.md](docs/code-interactions.md)
