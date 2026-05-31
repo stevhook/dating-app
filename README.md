@@ -4,7 +4,7 @@ Learning project for building a dating app with a .NET API and Angular client.
 
 ## Current State
 
-This repo is in an active build phase. Core auth and API plumbing are implemented, and the backend now includes richer member profile data, photos, repository-backed member queries, and automatic seed data.
+This repo is in an active build phase. Core auth and API plumbing are implemented, and the backend includes richer member profile data, photos, repository-backed member queries, and automatic seed data.
 
 ## Tech Stack
 
@@ -29,6 +29,7 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
     - `POST /api/account/register`
     - `POST /api/account/login`
 - JWT token generation via `ITokenService`/`TokenService`
+- Auth response DTO includes `ImageUrl` for client-side avatar display
 - JWT auth configured in startup pipeline
 - Repository abstraction for member data via `IMemberRepository` and `MemberRepository`
 - CORS enabled for:
@@ -38,7 +39,7 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
     - `GET /api/members`
     - `GET /api/members/{id}` (requires auth)
     - `GET /api/members/{id}/photos` (requires auth)
-- Member data now includes profile fields such as date of birth, gender, description, city, country, created date, and last active date
+- Member data includes profile fields such as date of birth, gender, description, city, country, created date, and last active date
 - Member photos are related through the `Photo` entity
 - Central exception middleware (`ExceptionMiddleware`)
 - Automatic database migration on API startup
@@ -49,8 +50,12 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
 
 - Angular app scaffolded with route-based feature structure
 - Navigation component with login/logout flow
+- Navigation includes:
+    - user avatar in the auth dropdown
+    - selectable daisyUI theme picker persisted in `localStorage`
 - Registration UI and API call wiring
 - Auth state stored in `localStorage` and restored at app init (`InitService`)
+- JWT auth token is attached to API requests via `jwtInterceptor`
 - Route guard for protected routes (`authGuard`)
 - Routes configured for:
     - home
@@ -68,11 +73,18 @@ This repo is in an active build phase. Core auth and API plumbing are implemente
     - 500 redirected to server error page with error payload in router state
 - Shared error UI components added for not found and server error screens
 - Tailwind CSS + daisyUI configured
+- Members list page loads API data and renders reusable member cards
+- Member detail page supports nested tabs:
+    - profile
+    - photos
+    - messages
+- Member detail route uses a resolver (`memberResolver`) to fetch member data before rendering
+- Age display is handled with a shared `AgePipe`
 
 ## Partially Implemented / Stubbed Areas
 
-- `MemberList` and `MemberDetailed` components are present but currently stub components
-- No end-to-end or contract test setup is currently wired in this repo
+- `MemberMessages` is a placeholder/stub view
+- No end-to-end or contract test setup is wired in this repo
 
 ## Local Run Instructions
 
@@ -104,7 +116,7 @@ npm start
 
 ## Notes
 
-- Development token key is currently stored in `API/appsettings.Development.json` for local learning use.
+- Development token key is stored in `API/appsettings.Development.json` for local learning use.
 - Existing controllers like weather are scaffold leftovers and not part of the auth/member flow.
 
 ## Architecture Diagram
