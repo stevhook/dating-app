@@ -1,4 +1,4 @@
-<header class="p-3 w-full fixed top-0 z-50 bg-linear-to-r from-primary to-secondary">
+<header class="p-3 w-full fixed top-0 z-50 bg-linear-to-r from-primary to-black">
     <div class="flex align-middle items-center px-10 mx-auto gap-6">
         <div class="text-white">
             <a routerLink="/" routerLinkActive="text-accent" [routerLinkActiveOptions]="{exact: true}"
@@ -44,7 +44,7 @@
             @if(accountService.currentUser(); as user) {
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button"
-                    class="flex items-center text-white text-xl gap-3 cursor-pointer btn m-1 ">
+                    class="flex items-center text-xl gap-3 cursor-pointer btn m-1 ">
                     <img [src]="user?.imageUrl || '/user.png'" alt="user avatar" class="w-10 h-10 rounded-full" />
                     <span>{{user.displayName}}</span>
                 </div>
