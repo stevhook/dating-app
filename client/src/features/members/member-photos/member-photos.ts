@@ -6,10 +6,11 @@ import { ImageUpload } from "../../../shared/image-upload/image-upload";
 import { AccountService } from '../../../core/services/account-service';
 import { User } from '../../../types/user';
 import { FavouriteButton } from "../../../shared/favourite-button/favourite-button";
+import { DeleteButton } from "../../../shared/delete-button/delete-button";
 
 @Component({
   selector: 'app-member-photos',
-  imports: [ImageUpload, FavouriteButton],
+  imports: [ImageUpload, FavouriteButton, DeleteButton],
   templateUrl: './member-photos.html',
   styleUrl: './member-photos.css',
 })
@@ -61,5 +62,13 @@ export class MemberPhotos implements OnInit {
   
   isMainPhoto(photo: Photo) {
     return photo.url === this.memberService.member()?.imageUrl
+  }
+
+  deletePhoto(photoId: number) {
+    this.memberService.deletePhoto(photoId).subscribe({
+      next: () => {
+        this.photos.update(photos => photos.filter(x => x.id !== photoId))
+      }
+    })
   }
 }

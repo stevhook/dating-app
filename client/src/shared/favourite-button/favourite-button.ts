@@ -11,7 +11,7 @@ export class FavouriteButton {
   isDisabled = input(false);
   isClicked = output<void>();
 
-  protected clickFavourite() {
+  protected onClick() {
     this.isClicked.emit();
   }
 }
