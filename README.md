@@ -2,108 +2,122 @@
 
 Learning project for building a dating app with a .NET API and Angular client.
 
-## Current State
+## Current Functionality
 
-This repo is in an active build phase. Core auth and API plumbing are implemented, and the backend includes richer member profile data, photos, repository-backed member queries, and automatic seed data.
+This repository currently supports authenticated member browsing and profile management, including photo upload and main photo selection.
 
 ## Tech Stack
 
-- Backend: ASP.NET Core (`net10.0`), Entity Framework Core, SQLite, JWT auth
-- Frontend: Angular 20, Signals, Angular Router, Tailwind CSS v4, daisyUI
+- Backend: ASP.NET Core Web API (.NET 10), EF Core, SQLite, JWT auth, Cloudinary, OpenAPI + Scalar
+- Frontend: Angular 20 (standalone components + signals), Angular Router, Tailwind CSS v4, daisyUI
 
 ## Project Structure
 
 - `API/`: ASP.NET Core Web API
 - `client/`: Angular frontend
-- `docs/`: requirement notes and supporting docs
+- `docs/`: design and architecture notes
 
-## Implemented Backend Features
+## Backend Features (Implemented)
 
-- API bootstrapped with controller-based routing
-- `AppDbContext` + SQLite connection and EF migrations
-- Domain entities for:
-    - `AppUser`
-    - `Member`
-    - `Photo`
-- Account auth endpoints:
-    - `POST /api/account/register`
-    - `POST /api/account/login`
-- JWT token generation via `ITokenService`/`TokenService`
-- Auth response DTO includes `ImageUrl` for client-side avatar display
-- JWT auth configured in startup pipeline
-- Repository abstraction for member data via `IMemberRepository` and `MemberRepository`
-- CORS enabled for:
+- Controller-based API with base route pattern `api/[controller]`
+- SQLite persistence via `AppDbContext` and EF migrations
+- Automatic migration + seed on startup in development
+- Seed source: `API/Data/UserSeedData.json`
+- JWT authentication and authorization
+- Centralized exception middleware
+- CORS for Angular dev origins:
     - `http://localhost:4200`
     - `https://localhost:4200`
-- Members endpoints (JWT protected):
-    - `GET /api/members`
-    - `GET /api/members/{id}` (requires auth)
-    - `GET /api/members/{id}/photos` (requires auth)
-- Member data includes profile fields such as date of birth, gender, description, city, country, created date, and last active date
-- Member photos are related through the `Photo` entity
-- Central exception middleware (`ExceptionMiddleware`)
-- Automatic database migration on API startup
-- Development seed process on API startup using `Data/UserSeedData.json`
-- Test error endpoints (`/api/buggy/*`) for frontend error handling work
+- OpenAPI document and Scalar API reference available in development
+- Member repository abstraction (`IMemberRepository` / `MemberRepository`)
+- Cloudinary-backed image upload/delete service (`PhotoService`)
 
-## Implemented Frontend Features
+### API Endpoints
 
-- Angular app scaffolded with route-based feature structure
-- Navigation component with login/logout flow
-- Navigation includes:
-    - user avatar in the auth dropdown
-    - selectable daisyUI theme picker persisted in `localStorage`
-- Registration UI and API call wiring
-- Auth state stored in `localStorage` and restored at app init (`InitService`)
-- JWT auth token is attached to API requests via `jwtInterceptor`
-- Route guard for protected routes (`authGuard`)
-- Routes configured for:
-    - home
-    - members list/detail
-    - lists
-    - messages
-    - errors test page
-    - server error page
-    - wildcard not found page
-- Error testing page calls backend `buggy` endpoints
-- HTTP error interceptor handling:
-    - 400 validation errors mapped to model state array
-    - 401 shown as toast
-    - 404 redirected to not found page
-    - 500 redirected to server error page with error payload in router state
-- Shared error UI components added for not found and server error screens
-- Tailwind CSS + daisyUI configured
-- Members list page loads API data and renders reusable member cards
-- Member detail page supports nested tabs:
+#### Account
+
+- `POST /api/account/register`
+- `POST /api/account/login`
+
+#### Members (all require JWT auth)
+
+- `GET /api/members`
+- `GET /api/members/{id}`
+- `GET /api/members/{id}/photos`
+- `PUT /api/members` (update profile fields)
+- `POST /api/members/add-photo` (multipart form upload)
+- `PUT /api/members/set-main-photo/{photoId}`
+- `DELETE /api/members/delete-photo/{photoId}`
+
+#### Error Testing
+
+- `GET /api/buggy/auth`
+- `GET /api/buggy/not-found`
+- `GET /api/buggy/server-error`
+- `GET /api/buggy/bad-request`
+
+## Frontend Features (Implemented)
+
+- Auth flows: register, login, logout
+- Auth state persisted in `localStorage` and restored at app bootstrap (`InitService`)
+- JWT automatically attached to outgoing API requests (`jwtInterceptor`)
+- Global HTTP error handling (`errorInterceptor`):
+    - validation errors flattened from model state
+    - unauthorized responses shown as toast
+    - server errors routed to dedicated error page
+- Protected app area via route guard (`authGuard`)
+- Member list and member detail routes
+- Member detail resolver preloads member data (`memberResolver`)
+- Member detail tabs:
     - profile
     - photos
     - messages
-- Member detail route uses a resolver (`memberResolver`) to fetch member data before rendering
-- Age display is handled with a shared `AgePipe`
+- Profile editing with save flow and unsaved-change protection
+    - route can-deactivate guard (`preventUnsavedChangesGuard`)
+    - browser tab-close warning for dirty forms
+- Photo management on member profile:
+    - drag/drop upload preview
+    - upload to API
+    - set main photo
+    - delete non-main photo
+- Nav includes theme picker (daisyUI themes), persisted in `localStorage`
 
-## Partially Implemented / Stubbed Areas
+## Placeholder / In Progress
 
-- `MemberMessages` is a placeholder/stub view
-- No end-to-end or contract test setup is wired in this repo
+- `Lists` page is currently a placeholder view
+- `Messages` page is currently a placeholder view
+- Member detail `Messages` tab is currently a placeholder view
+- No end-to-end test suite is configured yet
 
-## Local Run Instructions
+## Local Development
+
+## Prerequisites
+
+- .NET SDK 10
+- Node.js (LTS recommended)
+- npm
 
 ### 1) Run the API
 
 From `API/`:
 
 ```bash
+dotnet restore
 dotnet run
 ```
 
-The API is configured for `https://localhost:5001`.
+API default URL:
 
-On startup the API will automatically:
+- `https://localhost:5001`
 
-- apply pending EF migrations
-- seed development users if the database is empty
+Startup behavior:
 
-The current seed data comes from `API/Data/UserSeedData.json` and uses the default development password `00Password!`.
+- applies pending EF migrations
+- seeds users when database is empty
+
+Default development seed password:
+
+- `00Password!`
 
 ### 2) Run the Angular client
 
@@ -114,11 +128,16 @@ npm install
 npm start
 ```
 
-## Notes
+Client dev server:
 
-- Development token key is stored in `API/appsettings.Development.json` for local learning use.
-- Existing controllers like weather are scaffold leftovers and not part of the auth/member flow.
+- `https://localhost:4200` (SSL is enabled in Angular serve config)
 
-## Architecture Diagram
+## Configuration Notes
+
+- Angular development environment points to `https://localhost:5001/api/`
+- Photo upload/delete requires valid Cloudinary settings in API configuration
+- `TokenKey` in development settings is for local learning only and should not be used in production
+
+## Architecture Notes
 
 - Code interaction map: [docs/code-interactions.md](docs/code-interactions.md)
