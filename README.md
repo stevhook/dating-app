@@ -97,6 +97,36 @@ This repository currently supports authenticated member browsing and profile man
 - Node.js (LTS recommended)
 - npm
 
+### HTTPS Certificates (required for local SSL)
+
+This project uses HTTPS for both API and client in development:
+
+- API: `https://localhost:5001` (ASP.NET Core development certificate)
+- Client: `https://localhost:4200` (Angular uses `client/ssl/localhost.pem` and `client/ssl/localhost-key.pem`)
+
+#### Trust the ASP.NET Core development certificate
+
+Run from any terminal:
+
+```bash
+dotnet dev-certs https --trust
+```
+
+#### Generate client certificate files
+
+From the `client/` folder, generate the cert and key files used by Angular:
+
+```bash
+mkcert -install
+mkcert -key-file ssl/localhost-key.pem -cert-file ssl/localhost.pem localhost 127.0.0.1 ::1
+```
+
+If `mkcert` is not installed on Windows:
+
+```bash
+choco install mkcert
+```
+
 ### 1) Run the API
 
 From `API/`:
